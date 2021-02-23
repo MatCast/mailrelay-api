@@ -23,9 +23,14 @@ class MailrelayClient(object):
         For queriable parameters
         '''
         params = {}
+        no_query = ['page', 'unique', 'include']
         for key, value in kwargs.items():
             if value:
-                if 'page' not in key:
+                is_query = True
+                for keyword in no_query:
+                    if key in keyword:
+                        is_query = False
+                if is_query:
                     params[f'q[{key}]'] = value
                 else:
                     params[key] = kwargs[key]
@@ -59,7 +64,6 @@ class MailrelayClient(object):
 
         Parameters
         ----------
-        **kwargs :
         page (int): Page number
         per_page (int): Number of records per page
         id_eq (int): Search: ID equals
@@ -88,6 +92,98 @@ class MailrelayClient(object):
     @check_request
     def get_sent_campaign(self, id):
         req_dict = self.__compose_request('sent_campaigns', id)
+        return requests.get(**req_dict)
+
+    @check_request
+    def get_sent_campaign_clicks(
+        self,
+        id,
+        unique=False,
+        page=None,
+        browser_eq=None,
+        browser_cont=None,
+        city_eq=None,
+        city_cont=None,
+        state_eq=None,
+        state_cont=None,
+        country_eq=None,
+        country_cont=None,
+        ip_eq=None,
+        ip_cont=None,
+    ):
+        """
+       Get sent campaigns for statistics.
+
+        Parameters
+        ----------
+        page (int): Page number
+        per_page (int): Number of records per page
+        unique (bool): Unique impressions grouped by sent email
+        browser_eq (str): Search: Browser equals
+        browser_cont (str): Search: Browser contains
+        city_eq (str): Search: City equals
+        city_cont (str): Search: City contains
+        state_eq (str): Search: State equals
+        state_cont (str): Search: State contains
+        country_eq (str): Search: Country equals
+        country_cont (str): Search: Country contains
+        ip_eq (str): Search: IP equals
+        ip_cont (str): Search: IP contains
+
+        Returns
+        ----------
+        Response as dict.
+        """
+        params = locals()
+        params.pop('self')
+        req_dict = self.__compose_request('sent_campaigns', id, 'clicks',
+                                          **params)
+        return requests.get(**req_dict)
+
+    @check_request
+    def get_sent_campaign_impressions(
+        self,
+        id,
+        unique=False,
+        page=None,
+        browser_eq=None,
+        browser_cont=None,
+        city_eq=None,
+        city_cont=None,
+        state_eq=None,
+        state_cont=None,
+        country_eq=None,
+        country_cont=None,
+        ip_eq=None,
+        ip_cont=None,
+    ):
+        """
+       Get sent campaigns for statistics.
+
+        Parameters
+        ----------
+        page (int): Page number
+        per_page (int): Number of records per page
+        unique (bool): Unique impressions grouped by sent email
+        browser_eq (str): Search: Browser equals
+        browser_cont (str): Search: Browser contains
+        city_eq (str): Search: City equals
+        city_cont (str): Search: City contains
+        state_eq (str): Search: State equals
+        state_cont (str): Search: State contains
+        country_eq (str): Search: Country equals
+        country_cont (str): Search: Country contains
+        ip_eq (str): Search: IP equals
+        ip_cont (str): Search: IP contains
+
+        Returns
+        ----------
+        Response as dict.
+        """
+        params = locals()
+        params.pop('self')
+        req_dict = self.__compose_request('sent_campaigns', id, 'impressions',
+                                          **params)
         return requests.get(**req_dict)
 
 
