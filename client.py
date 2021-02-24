@@ -43,6 +43,7 @@ class MailrelayClient(object):
         req_dict = dict(url=url, params=payload, headers=self.headers)
         return req_dict
 
+    # ##### SENT CAMPAIGNS #####
     @check_request
     def get_sent_campaigns(
         self,
@@ -83,10 +84,7 @@ class MailrelayClient(object):
         """
         params = locals()
         params.pop('self')
-        req_dict = self.__compose_request(
-            'sent_campaigns',
-            **params
-        )
+        req_dict = self.__compose_request('sent_campaigns', **params)
         return requests.get(**req_dict)
 
     @check_request
@@ -100,6 +98,7 @@ class MailrelayClient(object):
         id,
         unique=False,
         page=None,
+        per_page=None,
         browser_eq=None,
         browser_cont=None,
         city_eq=None,
@@ -146,6 +145,7 @@ class MailrelayClient(object):
         id,
         unique=False,
         page=None,
+        per_page=None,
         browser_eq=None,
         browser_cont=None,
         city_eq=None,
@@ -186,11 +186,120 @@ class MailrelayClient(object):
                                           **params)
         return requests.get(**req_dict)
 
+    @check_request
+    def get_sent_campaign_sent_emails(
+        self,
+        id,
+        page=None,
+        per_page=None,
+        include_impressions=False,
+        include_clicks=False,
+        include_unsubscribe_events=False,
+        email_eq=None,
+        email_cont=None,
+        status_eq=None,
+        status_cont=None,
+        processed_at_eq=None,
+        processed_at_gteq=None,
+        processed_at_lteq=None,
+        delivered_at_eq=None,
+        delivered_at_gteq=None,
+        delivered_at_lteq=None,
+        bounced_at_eq=None,
+        bounced_at_gteq=None,
+        bounced_at_lteq=None,
+        bounce_category_eq=None,
+        bounce_category_cont=None,
+        soft_bounced_at_eq=None,
+        soft_bounced_at_gteq=None,
+        soft_bounced_at_lteq=None,
+    ):
+        """
+       Get sent campaigns for statistics.
+
+        Parameters
+        ----------
+        page (int): Page number
+        per_page (int): Number of records per page
+        include_impressions (bool): Include impressions in the results,
+        include_clicks (bool): Include clicks in the results,
+        include_unsubscribe_events (bool): Include unsubscribe events in the results,
+        email_eq (str): Search: Email equals,
+        email_cont (str): Search: Email contains,
+        status_eq (str): Search: Status equals,
+        status_cont (str): Search: Status contains,
+        processed_at_eq (date_time): Search: Processed at equals,
+        processed_at_gteq (date_time): Search: Processed at greater than or equal to,
+        processed_at_lteq (date_time): Search: Processed at less than or equal to,
+        delivered_at_eq (date_time): Search: Delivered at equals,
+        delivered_at_gteq (date_time): Search: Delivered at greater than or equal to,
+        delivered_at_lteq (date_time): Search: Delivered at less than or equal to,
+        bounced_at_eq (date_time): Search: Bounced at equals,
+        bounced_at_gteq (date_time): Search: Bounced at greater than or equal to,
+        bounced_at_lteq (date_time): Search: Bounced at less than or equal to,
+        bounce_category_eq (str): Search: Bounce category equals,
+        bounce_category_cont (str): Search: Bounce category contains,
+        soft_bounced_at_eq (date_time): Search: Soft bounced at equals,
+        soft_bounced_at_gteq (date_time): Search: Soft bounced at greater than or equal to,
+        soft_bounced_at_lteq (date_time): Search: Soft bounced at less than or equal to,
+
+        Returns
+        ----------
+        Response as dict.
+        """
+        params = locals()
+        params.pop('self')
+        req_dict = self.__compose_request('sent_campaigns', id, 'sent_emails',
+                                          **params)
+        return requests.get(**req_dict)
+
+    @check_request
+    def get_sent_campaign_unsubscribe_events(
+        self,
+        id,
+        page=None,
+        per_page=None,
+        email_eq=None,
+        email_cont=None,
+        sent_email_id_eq=None,
+        sent_email_id_gteq=None,
+        sent_email_id_lteq=None,
+        source_eq=None,
+        source_cont=None,
+    ):
+        """
+       Get sent campaigns for statistics.
+
+        Parameters
+        ----------
+        id (int): ID of the record,
+        page (int): Page number,
+        per_page (int): Number of records per page,
+        email_eq (str): Search: Email equals,
+        email_cont (str): Search: Email contains,
+        sent_email_id_eq (int): Search: Sent email equals,
+        sent_email_id_gteq (int): Search: Sent email greater than or equal to,
+        sent_email_id_lteq (int): Search: Sent email less than or equal to,
+        source_eq (str): Search: Processed at greater than or equal to,
+        source_cont (str): Search: Processed at less than or equal to,
+
+        Returns
+        ----------
+        Response as dict.
+        """
+        params = locals()
+        params.pop('self')
+        req_dict = self.__compose_request('sent_campaigns', id,
+                                          'unsubscribe_events', **params)
+        return requests.get(**req_dict)
+
+    # ##### END SENT CAMPAIGNS #####
+
 
 if __name__ == '__main__':
     API_KEY = os.getenv('API_KEY')
     DOMAIN = os.getenv('DOMAIN')
     client = MailrelayClient(API_KEY, DOMAIN)
-    campaigns = client.get_sent_campaigns(sender_id_eq=2)
-    campaign = client.get_sent_campaign(20)
+    # campaigns = client.get_sent_campaigns(sender_id_eq=2)
+    campaign = client.get_sent_campaign_impressions(21)
     print(campaign)
